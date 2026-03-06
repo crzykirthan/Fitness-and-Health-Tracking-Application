@@ -1,0 +1,16 @@
+frontend :
+	html,css and javascript 
+
+backend :
+	php and MySQL
+
+database :
+	MySQL (phpMyAdmin)
+
+technology :
+	vscode
+
+server :
+	xampp sever to run the project locally 
+
+NOTE: MAKE SURE TO MODIDY LINK IN EVERY FILE WHERE YOU CREATED THE PROJECT  
