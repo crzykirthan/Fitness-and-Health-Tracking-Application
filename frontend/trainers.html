@@ -1,0 +1,440 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Trainers - FitnessPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            overflow-y: scroll;
+            background-color: #000;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #ffcc00;
+            border-radius: 10px;
+            border: 3px solid #1a1a1a;
+        }
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        .navbar {
+            transition: background-color 0.3s ease-in-out;
+            background-color: rgba(0, 0, 8, 0.550);
+        }
+        .navbar.scrolled {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            color: #ffcc00;
+        }
+        .hero-section {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .hero-section h1 {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(90deg, #ff6347, #ffcc33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mobile-menu {
+            display: none;
+            background-color: #000;
+            position: absolute;
+            top: 56px;
+            right: 0;
+            width: 100%;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        .mobile-menu ul li {
+            margin-bottom: 1rem;
+        }
+        .mobile-menu ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+        .mobile-menu ul li a:hover {
+            color: #ffcc00;
+        }
+        .mobile-menu ul li a:focus {
+            outline: 2px solid #ffcc00;
+        }
+  /* Active Page Underline */
+  .navbar a:not(.login):not(.logout) {
+                    position: relative;
+                }
+
+        /* Loader animation */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffcc00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Prevent scrolling while loading */
+        body.loading {
+            overflow: hidden;
+        }
+        /* Active Page Underline */
+        .navbar a:not(.login):not(.logout) {
+            position: relative;
+        }
+        
+        .trainer-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-height: 450px; /* Increased height */
+        }
+        .trainer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        .trainer-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border: 5px solid #ffcc00;
+            border-radius: 5px;
+        }
+        .trainer-card-body {
+            padding: 1rem;
+            text-align: left;
+            background-color: #111;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .trainer-card-body h3 {
+            font-size: 1.5rem;
+            color: #ffcc00;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .trainer-card-body p {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .trainer-card-body button {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: center;
+        }
+        .trainer-card-body button:hover {
+            background-color: #e6b800;
+        }
+        .navbar a:not(.login):not(.logout) {
+            position: relative;
+        }
+        .navbar a:not(.login):not(.logout)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #ffcc00;
+            transition: width 0.3s ease;
+        }
+        .navbar a:not(.login):not(.logout):hover::after,
+        .navbar a:not(.login):not(.logout).active::after {
+            width: 100%;
+        }
+        
+    </style>
+</head>
+<body>
+    <img alt="Background image of fitness enthusiasts working out in a modern gym" class="background-image" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&h=600&fit=crop"/>
+    
+    <!-- Navbar -->
+    <nav class="navbar shadow-lg fixed top-0 w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between py-4">
+                <a class="flex items-center py-2 px-2 text-white font-semibold text-xl" href="home.html">FITNESS PRO</a>
+                <div class="hidden md:flex space-x-4 font-bold">
+                    <a class="text-yellow-400" href="home.html">Home</a>
+                    <a class="text-yellow-400" href="about.html">About</a>
+                    <a class="text-yellow-400" href="features.html">Features</a>
+                    <a class="text-yellow-400" href="details.html">Details</a>
+                    <a class="text-yellow-400" href="goal.html">Goal</a>
+                    <a class="active text-yellow-400" href="trainers.html">Trainers</a>     
+                    <a class="text-yellow-400" href="profile.html">Profile</a>
+                    <a class="text-yellow-400" href="review.html">Rate</a>
+                    <a href="http://localhost/fitness_website/backend/logout.php" class="text-yellow-400 logout">Logout <i class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <button aria-label="Toggle Menu" class="md:hidden mobile-menu-button">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="hidden mobile-menu">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="details.html">Details</a></li>
+            <li><a href="trainers.html">Trainers</a></li>
+            <li><a href="goal.html">Goal</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="review.html">Rate</a></li>
+            <li><a href="http://localhost/fitness_website/backend/logout.php">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Trainers Section -->
+    <section class="py-20 bg-black bg-opacity-85">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-yellow-400">Our Trainers</h2>
+                <p class="mt-4 text-white">Meet our professional trainers who will guide you on your fitness journey.</p>
+            </div>
+            <div class="flex flex-wrap -mx-4">
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer John Doe demonstrating a workout" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/m3jg613iVAhUeufNANhgJ69mvVQEiRZ-kLAZOiXm8to.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">John Doe</h3>
+                            <p class="text-white"><i class="fas fa-dumbbell"></i> Speciality: Strength Training and HIIT</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 10 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">johndoe@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i>  Rs.2199/mon</p>
+                            <button class="book-btn" data-trainer-id="1" data-trainer-email="johndoe@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer Emily Davis demonstrating a kettlebell workout" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/4GMZML0TkGUSs_xLJqUCNtlRpAqLLLUlLk2x33ITfWo.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Emily Davis</h3>
+                            <p class="text-white"><i class="fas fa-dumbbell"></i> Speciality: yoga</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 6 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">emilydavis@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i> Rs.1499/mon</p>
+                            <button class="book-btn" data-trainer-id="2" data-trainer-email="emilydavis@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer Mike Johnson coaching a client" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/_ld2foJiytBOXq6LTc7vKRyUmjJBlxL57hcqDIUTROo.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Mike Johnson</h3>
+                            <p class="text-white"><i class="fas fa-running"></i> Speciality: Cardio and Endurance Training</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 7 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">mikejohnson@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i> Rs.1999/mon</p>
+                            <button class="book-btn" data-trainer-id="3" data-trainer-email="mikejohnson@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer Jane Smith leading a yoga session" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/i4JHLkdMwX9T_tjxgEDj4jmK-_I6dB0LJJuUSGbufME.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Jane Smith</h3>
+                            <p class="text-white"><i class="fas fa-spa"></i> Speciality: cardio</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 8 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">janesmith@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i> Rs.1799/mon</p>
+                            <button class="book-btn" data-trainer-id="4" data-trainer-email="janesmith@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer Sarah Lee demonstrating a Pilates move" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/9CW72OxuqZQD9PryLUdx9h3APqXefoojQn_kq9OthDA.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Sarah Lee</h3>
+                            <p class="text-white"><i class="fas fa-spa"></i> Speciality: crossfit</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 8 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">sarahlee@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i> Rs.999/mon</p>
+                            <button class="book-btn" data-trainer-id="5" data-trainer-email="sarahlee@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 px-4 mb-8">
+                    <div class="trainer-card">
+                        <img alt="Trainer Laura Wilson leading a Zumba class" class="trainer-image" height="400" src="https://storage.googleapis.com/a1aa/image/s-A3z76_HimE_H3TISKxZG-Gz3mEC0cGtVGt8vB8WL0.jpg" width="600"/>
+                        <div class="trainer-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Laura Wilson</h3>
+                            <p class="text-white"><i class="fas fa-music"></i> Speciality: pilates</p>
+                            <p class="text-white"><i class="fas fa-calendar-alt"></i> Experience: 5 years</p>
+                            <p class="text-white"><i class="fas fa-envelope"></i> Email: <span class="text-yellow-400">laurawilson@gmail.com</span></p>
+                            <p class="text-white"><i class="fas fa-dollar-sign"></i> Rs.899/mon</p>
+                            <button class="book-btn" data-trainer-id="6" data-trainer-email="laurawilson@gmail.com">Request Booking</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <div id="popupMessage" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
+        <div class="bg-white p-6 rounded shadow-lg text-center">
+            <p id="popupText" class="text-lg text-black"></p>
+            <button onclick="closePopup()" class="mt-4 bg-yellow-500 px-4 py-2 rounded">OK</button>
+        </div>
+    </div>
+    
+
+    <!-- Scripts -->
+    <script>
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            menu.classList.toggle("open");
+        });
+
+        const navbar = document.querySelector(".navbar");
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+
+        // Show loader when the page starts loading
+        document.body.classList.add("loading");
+
+    // Hide loader when the page is fully loaded
+        window.addEventListener("load", function() {
+        document.getElementById("loader").style.display = "none";
+        document.body.classList.remove("loading");
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Fetch user's pending request on page load
+    fetch("http://localhost/fitness_website/backend/get_user_request_status.php")
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.trainer_email) {
+                document.querySelectorAll(".book-btn").forEach(button => {
+                    if (button.getAttribute("data-trainer-email") === data.trainer_email) {
+                        button.innerText = "Pending";
+                        button.disabled = true;
+                        button.style.backgroundColor = "gray";
+                    } else {
+                        // Prevent user from requesting another trainer
+                        button.addEventListener("click", function () {
+                            showPopup("You can only request one trainer at a time.");
+                        });
+                    }
+                });
+            }
+        });
+
+    // Handle booking request button click
+    document.querySelectorAll(".book-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const trainerEmail = this.getAttribute("data-trainer-email");
+            const userName = localStorage.getItem("user_name");
+            const userEmail = localStorage.getItem("user_email");
+
+            if (!userEmail) {
+                showPopup("You must log in to request a trainer.");
+                return;
+            }
+
+            fetch("http://localhost/fitness_website/backend/request_trainer.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    trainer_email: trainerEmail,
+                    user_name: userName,
+                    user_email: userEmail
+                }).toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                showPopup(data.message);
+
+                if (data.success) {
+                    button.innerText = "Pending";
+                    button.disabled = true;
+                    button.style.backgroundColor = "gray";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});
+
+// Show popup function
+function showPopup(message) {
+    document.getElementById("popupText").textContent = message;
+    document.getElementById("popupMessage").classList.remove("hidden");
+}
+
+// Close popup function
+function closePopup() {
+    document.getElementById("popupMessage").classList.add("hidden");
+}
+
+        
+</script>
+</body>
+</html>

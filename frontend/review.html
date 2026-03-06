@@ -1,0 +1,569 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Rate - FitnessPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            overflow-y: scroll;
+            background-color: #000;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #ffcc00;
+            border-radius: 10px;
+            border: 3px solid #1a1a1a;
+        }
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        .navbar {
+            transition: background-color 0.3s ease-in-out;
+            background-color: rgba(0, 0, 8, 0.550);
+        }
+        .navbar.scrolled {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            color: #ffcc00;
+        }
+        .hero-section {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .hero-section h1 {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(90deg, #ff6347, #ffcc33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mobile-menu {
+            display: none;
+            background-color: #000;
+            position: absolute;
+            top: 56px;
+            right: 0;
+            width: 100%;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        .mobile-menu ul li {
+            margin-bottom: 1rem;
+        }
+        .mobile-menu ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+        .mobile-menu ul li a:hover {
+            color: #ffcc00;
+        }
+        .mobile-menu ul li a:focus {
+            outline: 2px solid #ffcc00;
+        }
+        .rate-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .rate-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        .rate-card-body {
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #111;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .rate-card-body h3 {
+            font-size: 1.5rem;
+            color: #ffcc00;
+            margin-bottom: 1rem;
+        }
+        .rate-card-body p {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .rate-card-body button {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .rate-card-body button:hover {
+            background-color: #e6b800;
+        }
+        .rate-card-body input, .rate-card-body select, .rate-card-body textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+        .rate-card-body label {
+            color: #ffcc00;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-align: left;
+        }
+
+        
+         /* Loader animation */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffcc00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+            }
+
+        /* Prevent scrolling while loading */
+        body.loading {
+            overflow: hidden;
+            }
+
+        /* Active Page Underline */
+        .navbar a:not(.login):not(.logout) {
+            position: relative;
+        }
+        .navbar a:not(.login):not(.logout)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #ffcc00;
+            transition: width 0.3s ease;
+        }
+        .navbar a:not(.login):not(.logout):hover::after,
+        .navbar a:not(.login):not(.logout).active::after {
+            width: 100%;
+        }
+
+        /* Reviews Section */
+        .reviews {
+            margin-top: 2rem;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .marquee-wrapper {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        .marquee-content {
+            display: flex;
+            gap: 1rem;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .review-card {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-width: 300px;
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        .review-card h4 {
+            color: #ffcc00;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .review-card p {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* number of lines to show */
+            -webkit-box-orient: vertical;
+        }
+        .review-card .email {
+            color: #ffcc00;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <img alt="Background image of fitness enthusiasts working out in a modern gym" class="background-image" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&h=600&fit=crop"/>
+    
+    <!-- Navbar -->
+    <nav class="navbar shadow-lg fixed top-0 w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between py-4">
+                <a class="flex items-center py-2 px-2 text-white font-semibold text-xl" href="home.html">FITNESS PRO</a>
+                <div class="hidden md:flex space-x-4 font-bold">
+                    <a href="home.html" class="text-yellow-400">Home</a>
+                    <a href="about.html" class="text-yellow-400">About</a>
+                    <a href="features.html" class="text-yellow-400">Features</a>
+                    <a href="details.html" class="text-yellow-400">Details</a>
+                    <a href="goal.html" class="text-yellow-400">Goal</a>
+                    <a href="trainers.html" class="text-yellow-400">Trainers</a>
+                    <a href="profile.html" class="text-yellow-400">Profile</a>
+                    <a href="review.html" class="active text-yellow-400">Rate</a>
+                    <a href="http://localhost/fitness_website/backend/logout.php" class="text-yellow-400">Logout <i class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <button class="md:hidden mobile-menu-button" aria-label="Toggle Menu">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+        <div class="loader"></div>
+    </div>
+
+
+    <!-- Mobile Menu -->
+    <div class="hidden mobile-menu">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="details.html">Details</a></li>
+            <li><a href="trainers.html">Trainers</a></li>
+            <li><a href="goal.html">Goal</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="review.html">Rate</a></li>
+            <li><a href="http://localhost/fitness_website/backend/logout.php">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Rate Section -->
+    <section class="py-28 bg-black bg-opacity-85">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-yellow-400">Rate Us</h2>
+                <p class="mt-4 text-white">We value your feedback. Please rate your experience with us.</p>
+            </div>
+            <div class="flex justify-center">
+                <div class="w-full md:w-1/2 px-4 mb-8">
+                    <div class="rate-card">
+                        <div class="rate-card-body">
+                            <h3 class="text-2xl font-semibold text-yellow-400 mb-4">Your Rating</h3>
+                            <form id="reviewForm">
+                                <label for="email">Email</label>
+                                <input id="email" type="email" name="email" placeholder="Enter email" required />
+    
+                                <label for="rating">Rating</label>
+                                <select id="rating" name="rating">
+                                    <option value="5">5 - Excellent</option>
+                                    <option value="4">4 - Very Good</option>
+                                    <option value="3">3 - Good</option>
+                                    <option value="2">2 - Fair</option>
+                                    <option value="1">1 - Poor</option>
+                                </select>
+
+                                <label for="review">Review</label>
+                                <textarea id="review" name="review" rows="4" placeholder="Write your review here..." required></textarea>
+    
+                                <button type="submit" id="submitBtn">Submit Rating</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="text-center mb-4">
+                <h2 class="text-3xl font-bold text-yellow-400">Customer Reviews</h2>
+            </div>
+            <div class="reviews">
+                <div class="marquee-wrapper">
+                    <div class="marquee-content">
+                        <div class="review-card">
+                            <h4>Excellent Gym!</h4>
+                            <p>The trainers are very professional and the equipment is top-notch. Highly recommend!</p>
+                            <p class="email">- john.doe@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Great Experience</h4>
+                            <p>I love the variety of classes offered. The atmosphere is very motivating.</p>
+                            <p class="email">- jane.smith@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Good but can improve</h4>
+                            <p>The gym is good but sometimes it gets too crowded. More space would be great.</p>
+                            <p class="email">- mike.jones@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Best Gym Ever!</h4>
+                            <p>I've been to many gyms, but this one is by far the best. The staff is friendly and the facilities are clean.</p>
+                            <p class="email">- emily.brown@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Highly Recommend</h4>
+                            <p>The personal training sessions have really helped me achieve my fitness goals. Thank you!</p>
+                            <p class="email">- sarah.wilson@example.com</p>
+                        </div>
+                        <!-- Duplicate reviews for continuous loop -->
+                        <div class="review-card">
+                            <h4>Excellent Gym!</h4>
+                            <p>The trainers are very professional and the equipment is top-notch. Highly recommend!</p>
+                            <p class="email">- john.doe@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Great Experience</h4>
+                            <p>I love the variety of classes offered. The atmosphere is very motivating.</p>
+                            <p class="email">- jane.smith@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Good but can improve</h4>
+                            <p>The gym is good but sometimes it gets too crowded. More space would be great.</p>
+                            <p class="email">- mike.jones@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Best Gym Ever!</h4>
+                            <p>I've been to many gyms, but this one is by far the best. The staff is friendly and the facilities are clean.</p>
+                            <p class="email">- emily.brown@example.com</p>
+                        </div>
+                        <div class="review-card">
+                            <h4>Highly Recommend</h4>
+                            <p>The personal training sessions have really helped me achieve my fitness goals. Thank you!</p>
+                            <p class="email">- sarah.wilson@example.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+  <!-- Popup Message -->
+<div id="popupMessage" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white text-black p-6 rounded-lg shadow-lg text-center w-96">
+        <p id="popupText" class="mb-4"></p>
+        <button onclick="closePopup()" class="mt-2 px-6 py-2 bg-yellow-400 text-black rounded block mx-auto">OK</button>
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4 text-center">
+        <div class="container mx-auto flex justify-center items-center">
+            <div class="text-center">
+                <h2 class="text-lg font-bold">SBRR MFGC</h2>
+                <p class="text-gray-400">© 2025 FITNESS PRO.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        // Function to redirect to login page
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            menu.classList.toggle("open");
+        });
+
+        const navbar = document.querySelector(".navbar");
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+
+        
+        
+         // Show loader when the page starts loading
+            document.body.classList.add("loading");
+
+        // Hide loader when the page is fully loaded
+        window.addEventListener("load", function() {
+            document.getElementById("loader").style.display = "none";
+            document.body.classList.remove("loading");
+        });
+
+        // Function to show the popup message
+        document.addEventListener("DOMContentLoaded", function () {
+            const reviewForm = document.querySelector("#reviewForm");
+            const submitBtn = document.getElementById("submitBtn");
+
+        reviewForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            const formData = new FormData(reviewForm);
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+
+            fetch("http://localhost/fitness_website/backend/rate.php", {
+                method: "POST",
+                body: formData,
+            })
+        .then(response => response.json())
+        .then(data => {
+            showPopup(data.message);
+                submitBtn.textContent = data.success ? "Submitted ✅" : "Submit Rating";
+                    
+                if (!data.success) {
+                    setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit Rating";
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                showPopup("Something went wrong! Please try again.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Rating";
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.querySelector(".navbar");
+        window.addEventListener("scroll", function () {
+        navbar.classList.toggle("scrolled", window.scrollY > 50);
+        });
+    
+        // Mobile menu toggle
+        document.querySelector("button.mobile-menu-button").addEventListener("click", function () {
+        document.querySelector(".mobile-menu").classList.toggle("hidden");
+        });
+    });
+
+     // Load reviews when the page loads
+    document.addEventListener("DOMContentLoaded", loadReviews);
+
+    // Popup Functions
+        function showPopup(message) {
+            document.getElementById("popupText").textContent = message;
+            document.getElementById("popupMessage").classList.remove("hidden");
+        }
+
+        function closePopup() {
+            document.getElementById("popupMessage").classList.add("hidden");
+        }
+
+    // Load reviews when the page loads
+        document.querySelector("#reviewForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent page reload
+
+        const email = document.getElementById("email").value.trim();
+        const rating = document.getElementById("rating").value;
+        const review = document.getElementById("review").value.trim();
+
+        // Validate email format (client-side check)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            showPopup("Invalid email format. Please enter a valid email.");
+            return;
+        }
+
+        // Prevent empty review submission
+        if (review === "") {
+            showPopup("Please write a review.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("rating", rating);
+        formData.append("review", review);
+
+        document.getElementById("submitBtn").disabled = true;
+        document.getElementById("submitBtn").textContent = "Submitting...";
+
+        fetch("http://localhost/fitness_website/backend/rate.php", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            showPopup(data.message);
+            document.getElementById("submitBtn").textContent = data.success ? "Submitted ✅" : "Submit Rating";
+
+            if (!data.success) {
+                setTimeout(() => {
+                    document.getElementById("submitBtn").disabled = false;
+                    document.getElementById("submitBtn").textContent = "Submit Rating";
+                }, 2000);
+            }
+    })
+        
+        .catch(error => {
+            showPopup("Something went wrong! Please try again.");
+            document.getElementById("submitBtn").disabled = false;
+            document.getElementById("submitBtn").textContent = "Submit Rating";
+        });
+    });
+
+
+
+    </script>
+</body>
+</html>

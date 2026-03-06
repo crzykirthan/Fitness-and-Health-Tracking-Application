@@ -1,0 +1,300 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Fitness Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for mobile menu icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            overflow-y: scroll;
+            background-color: #000;
+            scroll-behavior: smooth; /* Smooth scrolling */
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #00ff00;
+            border-radius: 10px;
+            border: 3px solid #1a1a1a;
+        }
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+        }
+        .carousel img.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        @media (max-width: 768px) {
+            .carousel img {
+                height: 50vh;
+            }
+        }
+        .navbar {
+            transition: background-color 0.3s ease-in-out;
+            background-color: rgba(0, 0, 8, 0.677);
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            color: #ffcc00;
+        }
+        .hero-section {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .hero-section h1 {
+            font-family:'Times New Roman', Times, serif;
+            background: linear-gradient(90deg, #ff6347, #ffcc33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Loader animation */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffcc00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+            }
+
+        /* Prevent scrolling while loading */
+        body.loading {
+            overflow: hidden;
+            }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            background-color: #000;
+            position: absolute;
+            top: 56px;
+            right: 0;
+            width: 100%;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+        .mobile-menu ul li {
+            margin-bottom: 1rem;
+        }
+        .mobile-menu ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+        .mobile-menu ul li a:hover {
+            color: #ffcc00;
+        }
+        .mobile-menu ul li a:focus {
+            outline: 2px solid #ffcc00;
+        }
+        .carousel-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .carousel-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+        .carousel-button.active {
+            background-color: #ffcc00;
+        }
+        /* Auth button styles */
+        #authButton {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        #authButton:hover {
+            color: #ffcc00;
+        }
+    </style>
+    <script>
+        // Check login status on page load
+        window.onload = function() {
+            checkLoginStatus();
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authButton = document.getElementById('authButton');
+            
+            if (isLoggedIn === 'true') {
+                authButton.textContent = 'LOGOUT';
+                authButton.onclick = function() {
+                    localStorage.setItem('isLoggedIn', 'false');
+                    window.location.href = 'index.html';
+                };
+            } else {
+                authButton.textContent = 'LOGIN';
+                authButton.onclick = function() {
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+    </script>
+</head>
+</head>
+<body onclick="redirectToLogin()">
+    <!-- Navbar -->
+    <nav class="navbar shadow-lg fixed top-0 w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between py-4">
+                <a class="flex items-center py-2 px-2 text-white font-semibold text-xl" href="index.html">FITNESS PRO</a>
+                <div class="hidden md:flex space-x-4 font-bold">
+                    <a href="login.html" class="active text-yellow-400">Home</a>
+                    <a href="login.html" class="text-yellow-400">About</a>
+                    <a href="login.html" class="text-yellow-400">Features</a>
+                    <a href="login.html" class="text-yellow-400">Details</a>
+                    <a href="login.html" class="text-yellow-400">Goal</a>
+                    <a href="login.html" class="text-yellow-400">Trainers</a>
+                    <a href="login.html" class="text-yellow-400">Profile</a>
+                    <a href="login.html" class="text-yellow-400">Rate</a>
+                    <a href="login.html" class="font-semibold text-yellow-400">LOGIN</a>
+                </div>
+                <button class="md:hidden mobile-menu-button" aria-label="Toggle Menu">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="hidden mobile-menu">
+        <ul>
+            <li><a href="login.html">Home</a></li>
+            <li><a href="login.html">About</a></li>
+            <li><a href="login.html">Features</a></li>
+            <li><a href="login.html">Details</a></li>
+            <li><a href="login.html">Trainers</a></li>
+            <li><a href="login.href">Goal</a></li>
+            <li><a href="login.html">Profile</a></li>
+            <li><a href="login.html">Rate</a></li>
+            <li><a href="login.html">LOGIN</a></li>
+        </ul>
+    </div>
+    <!-- Hero Section -->
+    <div class="carousel">
+        <img class="carousel-image active" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&h=600&fit=crop" alt="A person lifting weights in a gym with intense focus">
+        <img class="carousel-image" src="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=1200&h=600&fit=crop" alt="A serene yoga session with people in various yoga poses">
+        <img class="carousel-image" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&h=600&fit=crop" alt="A personal trainer guiding a client through a workout">
+        <div class="absolute inset-0 flex items-center justify-center text-center hero-section">
+            <div class="text-white">
+                <h1 class="text-4xl md:text-6xl font-bold uppercase">transform your life today</h1>
+                <p class="mt-4 text-2xl">Join our community and start your fitness journey today.</p>
+                <a href="login.html" class="mt-8 inline-block bg-yellow-400 text-black py-2 px-4 rounded hover:bg-yellow-300">GET STARTED</a>
+            </div>
+        </div>
+        <div class="carousel-buttons">
+            <div class="carousel-button active" data-index="0"></div>
+            <div class="carousel-button" data-index="1"></div>
+            <div class="carousel-button" data-index="2"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Show loader when the page starts loading
+        document.body.classList.add("loading");
+
+        // Hide loader when the page is fully loaded
+        window.addEventListener("load", function() {
+            document.getElementById("loader").style.display = "none";
+            document.body.classList.remove("loading");
+        });
+
+        // Redirect to login page when the user clicks anywhere on the page
+        function redirectToLogin() {
+            window.location.href = "http://localhost/fitness_website/frontend/login.html"; // Redirect to login page
+        }
+
+        // Carousel functionality
+        const images = document.querySelectorAll('.carousel-image');
+        const buttons = document.querySelectorAll('.carousel-button');
+        let currentImageIndex = 0;
+
+//active class to the first image and button
+        function showNextImage() {
+            images[currentImageIndex].classList.remove('active');
+            buttons[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            images[currentImageIndex].classList.add('active');
+            buttons[currentImageIndex].classList.add('active');
+        }
+
+        setInterval(showNextImage, 3000);
+
+        const navbar = document.querySelector(".navbar");
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add("bg-black", "shadow-md");
+            } else {
+                navbar.classList.remove("bg-black", "shadow-md");
+            }
+        });
+// Mobile menu toggle
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            menu.classList.toggle("open");
+        });
+// Close mobile menu when a link is clicked
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                images[currentImageIndex].classList.remove('active');
+                buttons[currentImageIndex].classList.remove('active');
+                currentImageIndex = parseInt(button.getAttribute('data-index'));
+                images[currentImageIndex].classList.add('active');
+                buttons[currentImageIndex].classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
